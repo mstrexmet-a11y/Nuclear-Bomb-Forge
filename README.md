@@ -2,19 +2,19 @@
 
 A fictional cinematic visual-effects mod for Minecraft Forge 1.20.1.
 
-## Visual features
-- Custom geometric 3D item model with metallic panels and colored details.
-- Layered, volumetric-looking mushroom cloud made from smoke and cloud particles.
-- Expanding radial dust halo using outward particle motion.
-- Short client-side camera shake and a brief white flash overlay.
+## Current visual implementation
+- A custom multi-part 3D item assembled from model cuboids and metallic/industrial Minecraft atlas textures.
+- A procedural world-space mushroom-cloud mesh rendered locally with position-colour triangles (not vanilla smoke/explosion particle sprites).
+- A rising stem, scalloped volumetric crown, warm inner billows, drifting wisps and an expanding ground ring.
+- Animated growth, subtle billow motion, screen flash and camera shake.
+- The scene is cosmetic: it does not break blocks or damage entities.
 
-## Gameplay
-This is a fictional game effect only. It does not destroy blocks or damage entities.
+## Performance
+The cloud is generated procedurally on the client and is visible while the local cinematic timer is active. It uses a bounded mesh (rather than spawning hundreds of persistent particles).
 
 ## Build
 Requirements: Java 17 and Gradle 8.x with internet access for dependency resolution.
 
-From the project folder:
 ```sh
 gradle build
 ```
