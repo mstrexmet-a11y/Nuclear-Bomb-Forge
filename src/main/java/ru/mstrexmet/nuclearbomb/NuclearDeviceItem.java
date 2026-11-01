@@ -11,6 +11,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 public class NuclearDeviceItem extends Item {
     public NuclearDeviceItem(Properties properties) {
@@ -20,7 +22,9 @@ public class NuclearDeviceItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!level.isClientSide) {
+        if (level.isClientSide) {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientCinematicEffects::trigger);
+        } else {
             Vec3 p = player.position().add(player.getLookAngle().scale(5.0));
             BlockPos origin = BlockPos.containing(p.x, p.y, p.z);
             createCinematicEffect(level, origin);
@@ -34,42 +38,48 @@ public class NuclearDeviceItem extends Item {
         double y = origin.getY() + 0.5;
         double z = origin.getZ() + 0.5;
 
-        // A bright visual flash and expanding ground-level dust ring.
         level.sendParticles(ParticleTypes.FLASH, x, y + 1, z, 1, 0, 0, 0, 0);
         level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, x, y + 1, z, 1, 0, 0, 0, 0);
         level.playSound(null, origin, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0F, 0.55F);
 
-        for (int i = 0; i < 72; i++) {
-            double a = (Math.PI * 2.0 * i) / 72.0;
-            double r = 2.0 + (i % 5) * 0.35;
-            level.sendParticles(ParticleTypes.CLOUD,
-                    x + Math.cos(a) * r, y + 0.15, z + Math.sin(a) * r,
-                    1, 0.12, 0.08, 0.12, 0.02);
+        // Expanding, stylized dust halo. Radial particle velocity gives it motion.
+        for (int i = 0; i < 112; i++) {
+            double a = Math.PI * 2.0 * i / 112.0;
+            double dx = Math.cos(a);
+            double dz = Math.sin(a);
+            level.sendParticles(ParticleTypes.CLOUD, x + dx * 1.4, y + 0.18, z + dz * 1.4,
+                    1, dx * 0.72, 0.06, dz * 0.72, 0.08);
+            if (i % 2 == 0) {
+                level.sendParticles(ParticleTypes.POOF, x + dx * 1.1, y + 0.35, z + dz * 1.1,
+                        1, dx * 0.5, 0.04, dz * 0.5, 0.04);
+            }
         }
 
-        // Rising stem and layered cap create a stylized mushroom-cloud silhouette.
-        for (int layer = 0; layer < 13; layer++) {
-            double height = 1.5 + layer * 1.25;
-            double radius = layer < 7 ? 1.4 + layer * 0.22 : 3.0 + (layer - 7) * 0.72;
-            int points = layer < 7 ? 16 : 28;
+        // Dense layered particle volumes form a broad cap and a tapered stem.
+        for (int layer = 0; layer < 18; layer++) {
+            double height = 1.4 + layer * 0.82;
+            double radius;
+            if (layer < 8) radius = 0.9 + layer * 0.12;
+            else radius = 2.0 + Math.sin((layer - 7) / 10.0 * Math.PI) * 3.0;
+            int points = layer < 8 ? 22 : 44;
             for (int i = 0; i < points; i++) {
-                double a = (Math.PI * 2.0 * i) / points;
-                double wobble = 0.82 + ((i * 13 + layer * 7) % 9) * 0.045;
+                double a = Math.PI * 2.0 * i / points;
+                double wobble = 0.84 + ((i * 17 + layer * 11) % 13) * 0.025;
                 double px = x + Math.cos(a) * radius * wobble;
                 double pz = z + Math.sin(a) * radius * wobble;
-                level.sendParticles(layer % 3 == 0 ? ParticleTypes.CAMPFIRE_COSY_SMOKE : ParticleTypes.LARGE_SMOKE,
-                        px, y + height, pz, 1, 0.18, 0.45, 0.18, 0.015);
-                if (layer >= 7) {
-                    level.sendParticles(ParticleTypes.CLOUD, px, y + height + 0.25, pz,
-                            1, 0.3, 0.25, 0.3, 0.01);
+                level.sendParticles(layer % 4 == 0 ? ParticleTypes.CAMPFIRE_COSY_SMOKE : ParticleTypes.LARGE_SMOKE,
+                        px, y + height, pz, 1, 0.12, 0.32, 0.12, 0.012);
+                if (layer >= 8) {
+                    level.sendParticles(ParticleTypes.CLOUD, px, y + height + 0.18, pz,
+                            1, 0.16, 0.12, 0.16, 0.006);
                 }
             }
         }
 
-        // Tall central smoke column.
-        for (int i = 0; i < 35; i++) {
-            level.sendParticles(ParticleTypes.LARGE_SMOKE, x, y + 2 + i * 0.48, z,
-                    2, 0.65, 0.35, 0.65, 0.01);
+        for (int i = 0; i < 48; i++) {
+            double h = 1.5 + i * 0.34;
+            level.sendParticles(ParticleTypes.LARGE_SMOKE, x, y + h, z,
+                    2, 0.42, 0.22, 0.42, 0.008);
         }
     }
 }
