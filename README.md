@@ -1,28 +1,22 @@
 # Nuclear Bomb — Forge 1.20.1
 
-A fictional, cinematic Minecraft effect mod for Forge 1.20.1.
+A fictional cinematic visual-effects mod for Minecraft Forge 1.20.1.
 
-## Features
-- Nuclear-device item in the Tools & Utilities creative tab.
-- Bright flash, explosion particles and sound.
-- Expanding ground dust ring.
-- Layered rising mushroom-cloud silhouette.
-- Central smoke column.
+## Visual features
+- Custom geometric 3D item model with metallic panels and colored details.
+- Layered, volumetric-looking mushroom cloud made from smoke and cloud particles.
+- Expanding radial dust halo using outward particle motion.
+- Short client-side camera shake and a brief white flash overlay.
 
-**Gameplay note:** this initial version is a visual-only effect. It does not destroy blocks or simulate real-world weapon behavior.
+## Gameplay
+This is a fictional game effect only. It does not destroy blocks or damage entities.
 
 ## Build
-Requirements: Java 17 and internet access for Gradle dependency resolution.
+Requirements: Java 17 and Gradle 8.x with internet access for dependency resolution.
 
-On Windows:
-```bat
-gradlew.bat build
-```
-
-On Linux/macOS:
+From the project folder:
 ```sh
-./gradlew build
+gradle build
 ```
 
-The mod JAR will be in `build/libs/`.
-Use the Forge 1.20.1 (47.x) profile.
+The mod JAR will be in `build/libs/`. Use Minecraft Forge 1.20.1 (47.x).
