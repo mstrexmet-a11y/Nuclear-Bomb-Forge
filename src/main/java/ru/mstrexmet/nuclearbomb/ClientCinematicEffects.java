@@ -3,7 +3,7 @@ package ru.mstrexmet.nuclearbomb;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ComputeCameraAngles;
+import net.minecraftforge.client.event.ViewportEvent.ComputeCameraAngles;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
