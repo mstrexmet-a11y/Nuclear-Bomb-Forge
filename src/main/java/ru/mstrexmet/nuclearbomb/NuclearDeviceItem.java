@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -23,14 +24,14 @@ public class NuclearDeviceItem extends Item {
         if (!level.isClientSide) {
             Vec3 p = player.position().add(player.getLookAngle().scale(5.0));
             BlockPos origin = BlockPos.containing(p.x, p.y, p.z);
-            createCinematicEffect(level, origin);
+            createCinematicEffect((ServerLevel) level, origin);
             if (!player.getAbilities().instabuild) stack.shrink(1);
         }
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientCinematicEffects::trigger);
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 
-    private void createCinematicEffect(Level level, BlockPos origin) {
+    private void createCinematicEffect(ServerLevel level, BlockPos origin) {
         double x = origin.getX() + 0.5, y = origin.getY() + 0.5, z = origin.getZ() + 0.5;
         level.sendParticles(ParticleTypes.FLASH, x, y + 1, z, 1, 0, 0, 0, 0);
         level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, x, y + 1, z, 1, 0, 0, 0, 0);
