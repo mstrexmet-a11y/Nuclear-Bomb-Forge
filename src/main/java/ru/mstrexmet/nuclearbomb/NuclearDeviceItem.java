@@ -11,6 +11,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 public class NuclearDeviceItem extends Item {
     public NuclearDeviceItem(Properties properties) { super(properties); }
@@ -23,9 +25,8 @@ public class NuclearDeviceItem extends Item {
             BlockPos origin = BlockPos.containing(p.x, p.y, p.z);
             createCinematicEffect(level, origin);
             if (!player.getAbilities().instabuild) stack.shrink(1);
-        } else {
-            ClientCinematicEffects.trigger();
         }
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientCinematicEffects::trigger);
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 
