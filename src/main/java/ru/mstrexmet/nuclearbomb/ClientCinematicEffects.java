@@ -113,7 +113,7 @@ public final class ClientCinematicEffects {
 
         // Mushroom cap: overlapping custom mesh lobes create a scalloped,
         // volumetric crown rather than a flat particle billboard.
-        float capY = y + 0.55F + stemHeight;
+        double capY = y + 0.55F + stemHeight;
         float capRadius = 2.1F + growth * 7.2F;
         int lobes = 13;
         for (int i = 0; i < lobes; i++) {
